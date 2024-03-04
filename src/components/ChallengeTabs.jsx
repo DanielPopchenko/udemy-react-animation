@@ -1,16 +1,25 @@
+import { motion } from 'framer-motion';
 import Badge from './Badge.jsx';
+
+// ! HOW TO HANLDE ANIMATION OF SHARED ELEMENTS (IN OUR CASE ITS BAR BENEATH TABS)
 
 function Tab({ isSelected, onSelect, badgeCaption, children }) {
   return (
     <li>
-      <button
-        className={isSelected ? 'selected' : undefined}
-        onClick={onSelect}
-      >
+      <button className={isSelected ? 'selected' : undefined} onClick={onSelect}>
         {children}
-        <Badge caption={badgeCaption}></Badge>
+        {/* key will change, and therefore badges will be recreated and we will re run our animation */}
+        {/* all this only because of key */}
+        <Badge key={badgeCaption} caption={badgeCaption}></Badge>
       </button>
-      {isSelected && <div className="active-tab-indicator" />}
+      {isSelected && (
+        <motion.div
+          // ! framer-motion will detect when i render same elements with the same id
+          // ! and will play a smooth animation
+          layoutId="tab-indicator"
+          className="active-tab-indicator"
+        />
+      )}
     </li>
   );
 }

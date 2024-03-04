@@ -1,4 +1,6 @@
 import { useState } from 'react';
+// !
+import { AnimatePresence, motion } from 'framer-motion';
 
 import NewChallenge from './NewChallenge.jsx';
 
@@ -15,13 +17,26 @@ export default function Header() {
 
   return (
     <>
-      {isCreatingNewChallenge && <NewChallenge onDone={handleDone} />}
+      {/* 
+        if I want to animate the appearence of the element 
+        it will check if some element has an exit property
+        if yes, it will execute the animation for it 
+      */}
+      <AnimatePresence>
+        {isCreatingNewChallenge && <NewChallenge onDone={handleDone} />}
+      </AnimatePresence>
 
       <header id="main-header">
         <h1>Your Challenges</h1>
-        <button onClick={handleStartAddNewChallenge} className="button">
+        <motion.button
+          // ! I can also animate color
+          whileHover={{ scale: 1.1, backgroundColor: '#8b11f0' }}
+          transition={{ type: 'spring', stiffness: 500 }}
+          onClick={handleStartAddNewChallenge}
+          className="button"
+        >
           Add Challenge
-        </button>
+        </motion.button>
       </header>
     </>
   );

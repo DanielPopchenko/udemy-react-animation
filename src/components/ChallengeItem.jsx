@@ -1,22 +1,18 @@
 import { useContext } from 'react';
 
+// ! importing framer motion
+import { motion, AnimatePresence } from 'framer-motion';
+
 import { ChallengesContext } from '../store/challenges-context.jsx';
 
-export default function ChallengeItem({
-  challenge,
-  onViewDetails,
-  isExpanded,
-}) {
+export default function ChallengeItem({ challenge, onViewDetails, isExpanded }) {
   const { updateChallengeStatus } = useContext(ChallengesContext);
 
-  const formattedDate = new Date(challenge.deadline).toLocaleDateString(
-    'en-US',
-    {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }
-  );
+  const formattedDate = new Date(challenge.deadline).toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 
   function handleCancel() {
     updateChallengeStatus(challenge.id, 'failed');
@@ -27,7 +23,9 @@ export default function ChallengeItem({
   }
 
   return (
-    <li>
+    // ! layout prop points out that all layout animations, like our <li> going up when being removed
+    // ! should be animated
+    <motion.li layout exit={{ y: -30, opacity: 0 }}>
       <article className="challenge-item">
         <header>
           <img {...challenge.image} />
@@ -42,23 +40,34 @@ export default function ChallengeItem({
             </p>
           </div>
         </header>
-        <div className="challenge-item-details">
+        <div className={`challenge-item-details`}>
           <p>
             <button onClick={onViewDetails}>
               View Details{' '}
-              <span className="challenge-item-details-icon">&#9650;</span>
+              <motion.span
+                animate={{ rotate: isExpanded ? 180 : 0 }}
+                className="challenge-item-details-icon"
+              >
+                &#9650;
+              </motion.span>
             </button>
           </p>
 
-          {isExpanded && (
-            <div>
-              <p className="challenge-item-description">
-                {challenge.description}
-              </p>
-            </div>
-          )}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                // ! now expanding and closing this tab works just fine because
+                // ! we added motion element and initial, animate and exit configure objects
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+              >
+                <p className="challenge-item-description">{challenge.description}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </article>
-    </li>
+    </motion.li>
   );
 }
